@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌈 CIVIL MEME ARCHIVE 🌈</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273348; --border:#334155;
+    --text:#e2e8f0; --muted:#94a3b8;
+    --r1:#f43f5e; --r2:#fb923c; --r3:#facc15; --r4:#4ade80; --r5:#38bdf8; --r6:#818cf8; --r7:#e879f9;
+    --rainbow:linear-gradient(90deg,var(--r1),var(--r2),var(--r3),var(--r4),var(--r5),var(--r6),var(--r7),var(--r1));
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;animation:fadeIn .7s ease both;overflow-x:hidden;position:relative}
+  #particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(700px circle at var(--mx,50%) var(--my,50%),rgba(129,140,248,.09),transparent 60%)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 28px 100px}
+
+  .rainbow-bar{height:4px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 5s linear infinite;position:sticky;top:0;z-index:100;box-shadow:0 0 18px rgba(129,140,248,.4)}
+  @keyframes rainbowShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+  header{text-align:center;padding:64px 0 44px;position:relative}
+  header::before,header::after{content:'';position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:orbPulse 6s ease-in-out infinite alternate}
+  header::before{width:340px;height:180px;background:rgba(129,140,248,.18);top:30px;left:50%;transform:translateX(-70%)}
+  header::after{width:280px;height:150px;background:rgba(232,121,249,.15);top:40px;left:50%;transform:translateX(-30%);animation-delay:-3s}
+  @keyframes orbPulse{from{opacity:.6;transform:translateX(-70%) scale(1)}to{opacity:1;transform:translateX(-70%) scale(1.12)}}
+  .site-title{font-size:clamp(2.2rem,5.5vw,3.6rem);font-weight:900;letter-spacing:-.02em;background:var(--rainbow);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:titleFlow 8s linear infinite;line-height:1.1;margin-bottom:12px;position:relative;z-index:1;filter:drop-shadow(0 0 24px rgba(129,140,248,.35))}
+  @keyframes titleFlow{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+  .site-subtitle{font-size:.95rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;position:relative;z-index:1}
+  .site-subtitle::after{content:'|';animation:blink 1s step-end infinite;margin-left:2px;color:#818cf8}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  .quote-section{margin:44px 0 56px;display:flex;flex-direction:column;align-items:center;gap:18px}
+  .quote-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 32px;max-width:660px;width:100%;text-align:center;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3)}
+  .quote-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 5s linear infinite}
+  .quote-box::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.03) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 3.5s ease-in-out infinite}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  #quote-text{font-size:1.02rem;color:var(--text);line-height:1.65;font-style:italic;transition:opacity .2s,transform .2s;position:relative;z-index:1}
+  #quote-text.fade{opacity:0;transform:translateY(4px)}
+
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 24px;border-radius:9px;font-size:.92rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s,transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;position:relative;overflow:hidden}
+  .btn::before{content:'';position:absolute;inset:0;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 5s linear infinite;opacity:0;transition:opacity .2s}
+  .btn:hover::before{opacity:.08}
+  .btn:hover{background:#2d3f56;transform:translateY(-3px);box-shadow:0 6px 24px rgba(99,102,241,.28)}
+  .btn:active{transform:translateY(0)}
+
+  .btn-upload{background:linear-gradient(135deg,rgba(129,140,248,.15),rgba(232,121,249,.1));border-color:rgba(129,140,248,.4)}
+  .btn-upload:hover{border-color:rgba(129,140,248,.7);box-shadow:0 6px 24px rgba(129,140,248,.3)}
+
+  .btn-danger{background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.3);color:#f87171}
+  .btn-danger:hover{background:rgba(244,63,94,.18);border-color:rgba(244,63,94,.5);box-shadow:0 4px 16px rgba(244,63,94,.2)}
+
+  .section-title{font-size:1.05rem;font-weight:700;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  .cards-section{margin-bottom:64px}
+  .cards-row{display:flex;gap:20px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .cards-row::-webkit-scrollbar{height:4px}
+  .cards-row::-webkit-scrollbar-track{background:transparent}
+  .cards-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+  .person-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px 24px 26px;text-align:center;cursor:pointer;position:relative;overflow:hidden;flex:0 0 170px;min-width:170px;scroll-snap-align:start;animation:floatCard var(--float-dur,4s) ease-in-out infinite;animation-delay:var(--float-delay,0s);transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s;-webkit-tap-highlight-color:transparent}
+  .person-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite;animation-delay:var(--float-delay,0s)}
+  .person-card::after{content:'';position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:120px;height:60px;background:radial-gradient(ellipse,rgba(129,140,248,.18),transparent 70%);opacity:0;transition:opacity .3s}
+  .person-card:hover::after{opacity:1}
+  .person-card:hover{transform:translateY(-14px) scale(1.04);box-shadow:0 20px 48px rgba(0,0,0,.45),0 0 0 1px rgba(129,140,248,.35),0 0 28px rgba(129,140,248,.2);animation-play-state:paused;z-index:2}
+  @keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .card-avatar-placeholder{width:84px;height:84px;border-radius:50%;margin:0 auto 16px;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2.1rem;line-height:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+  .person-card:hover .card-avatar-placeholder{transform:scale(1.12) rotate(-4deg)}
+  .card-name{font-weight:800;font-size:1.05rem;margin-bottom:6px}
+  .card-title{font-size:.78rem;color:var(--muted);line-height:1.5}
+  .card-meme-count{margin-top:10px;font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--muted);background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.2);border-radius:99px;padding:2px 10px;display:inline-block;transition:all .2s}
+  .person-card:hover .card-meme-count{background:rgba(129,140,248,.18);color:var(--text)}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.12);transform:scale(0);animation:rippleAnim .5s linear;pointer-events:none}
+  @keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+
+  /* Stats Lab */
+  .lab-section{margin-bottom:64px}
+  .lab-tabs{display:flex;gap:6px;margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px}
+  .lab-tab{flex:1;padding:10px 14px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:7px}
+  .lab-tab:hover{color:var(--text);background:var(--surface2)}
+  .lab-tab.active{background:var(--surface2);color:var(--text);box-shadow:0 0 0 1px var(--border);position:relative;overflow:hidden}
+  .lab-tab.active::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite;border-radius:99px}
+  .lab-panel{display:none;animation:fadeIn .3s ease both}
+  .lab-panel.active{display:block}
+
+  .pr-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:700px){.pr-layout{grid-template-columns:1fr}}
+  .pr-person-list{display:flex;flex-direction:column;gap:8px}
+  .pr-person-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;color:var(--text);font-weight:600;font-size:.92rem;transition:background .15s,border-color .15s,transform .15s}
+  .pr-person-btn:hover{background:var(--surface2);transform:translateX(4px)}
+  .pr-person-btn.active{background:var(--surface2);border-color:rgba(129,140,248,.5);box-shadow:0 0 0 1px rgba(129,140,248,.2)}
+  .pr-person-emoji{font-size:1.4rem;width:36px;text-align:center}
+  .pr-person-info{text-align:left}
+  .pr-person-name{font-weight:700}
+  .pr-person-title{font-size:.75rem;color:var(--muted)}
+  .pr-stats-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;position:relative;overflow:hidden}
+  .pr-stats-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite}
+  .pr-stats-name{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+  .pr-stats-subtitle{font-size:.82rem;color:var(--muted);margin-bottom:22px}
+  .stat-row{margin-bottom:16px}
+  .stat-label-row{display:flex;justify-content:space-between;margin-bottom:5px;font-size:.82rem;font-weight:600}
+  .stat-val{color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .stat-track{height:8px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+  .stat-fill{height:100%;border-radius:99px;width:0;transition:width 0.7s cubic-bezier(.22,1,.36,1)}
+  .stat-fill.coffee{background:linear-gradient(90deg,#fb923c,#facc15)}
+  .stat-fill.chaos{background:linear-gradient(90deg,#f43f5e,#e879f9)}
+  .stat-fill.meet{background:linear-gradient(90deg,#38bdf8,#818cf8)}
+  .stat-fill.bug{background:linear-gradient(90deg,#4ade80,#38bdf8)}
+  .pr-verdict{margin-top:20px;padding:12px 16px;background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.2);border-radius:10px;font-size:.85rem;color:var(--muted);font-style:italic;line-height:1.5}
+
+  .wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:24px}
+  .wheel-question-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:8px}
+  .wheel-q-btn{padding:8px 18px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+  .wheel-q-btn:hover,.wheel-q-btn.active{background:var(--surface2);color:var(--text);border-color:rgba(129,140,248,.5)}
+  #wheel-display-question{font-size:1rem;font-weight:700;color:var(--text);text-align:center;min-height:28px}
+  .wheel-machine{position:relative;width:280px;height:280px}
+  .wheel-svg{width:280px;height:280px;transition:transform 0.05s linear}
+  .wheel-pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));z-index:5;animation:pointerBob 1s ease-in-out infinite}
+  @keyframes pointerBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+  #spin-btn{font-size:1rem;padding:14px 36px;border-radius:12px;letter-spacing:.04em}
+  .wheel-result{min-height:64px;text-align:center;animation:fadeIn .4s ease both}
+  .wheel-result-name{font-size:1.6rem;font-weight:900;background:var(--rainbow);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:titleFlow 4s linear infinite}
+  .wheel-result-crime{font-size:.92rem;color:var(--muted);margin-top:6px}
+
+  .vote-questions{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+  .vote-q-btn{padding:11px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;text-align:left;transition:background .15s,border-color .15s,transform .15s}
+  .vote-q-btn:hover{background:var(--surface2);transform:translateX(4px)}
+  .vote-q-btn.active{border-color:rgba(129,140,248,.5);background:var(--surface2)}
+  .vote-arena{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;position:relative;overflow:hidden}
+  .vote-arena::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite}
+  .vote-arena-title{font-size:1.05rem;font-weight:700;margin-bottom:20px;padding-top:4px}
+  .vote-candidates{display:flex;flex-direction:column;gap:10px}
+  .vote-candidate{display:flex;align-items:center;gap:14px;padding:11px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;transition:background .15s,border-color .15s;position:relative;overflow:hidden}
+  .vote-candidate:hover{background:var(--surface2)}
+  .vote-candidate.voted{border-color:rgba(129,140,248,.4)}
+  .vote-cand-fill{position:absolute;inset:0;border-radius:10px;opacity:.13;transition:width .6s cubic-bezier(.22,1,.36,1);width:0}
+  .vote-cand-emoji{font-size:1.3rem;z-index:1;flex-shrink:0}
+  .vote-cand-name{font-weight:700;font-size:.92rem;flex:1;z-index:1}
+  .vote-cand-bar-wrap{flex:2;z-index:1}
+  .vote-cand-track{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-bottom:2px}
+  .vote-cand-fill-bar{height:100%;border-radius:99px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite;transition:width .6s cubic-bezier(.22,1,.36,1);width:0}
+  .vote-cand-pct{font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .vote-cand-count{font-size:.82rem;font-weight:700;color:var(--text);z-index:1;flex-shrink:0;min-width:28px;text-align:right}
+  .vote-reset{margin-top:16px;font-size:.82rem;padding:8px 18px}
+
+  /* ── Gallery ── */
+  #gallery-view{display:none;animation:fadeIn .4s ease both}
+  .gallery-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-top:48px;flex-wrap:wrap}
+  .gallery-title{font-size:1.7rem;font-weight:800;flex:1}
+  .gallery-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+  /* Upload tile — lives inside the grid, same size as images */
+  .upload-tile{border-radius:12px;overflow:hidden;background:var(--surface);border:2px dashed rgba(129,140,248,.4);aspect-ratio:1;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .upload-tile:hover,.upload-tile.drag-over{border-color:rgba(129,140,248,.85);background:rgba(129,140,248,.1);transform:scale(1.04);box-shadow:0 0 0 3px rgba(129,140,248,.18),0 10px 28px rgba(0,0,0,.35)}
+  .upload-tile input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .upload-tile-plus{font-size:2.6rem;line-height:1;color:rgba(129,140,248,.7);transition:transform .2s cubic-bezier(.34,1.56,.64,1),color .2s}
+  .upload-tile:hover .upload-tile-plus{color:rgba(129,140,248,1);transform:scale(1.2) rotate(90deg)}
+  .upload-tile-label{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.4;padding:0 8px}
+  .upload-tile:hover .upload-tile-label{color:var(--text)}
+
+  /* Upload progress */
+  .upload-progress{display:none;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+  .upload-progress.show{display:block}
+  .upload-progress-bar-track{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-top:8px}
+  .upload-progress-bar{height:100%;border-radius:99px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 2s linear infinite;transition:width .3s ease;width:0}
+  .upload-progress-label{font-size:.82rem;color:var(--muted);display:flex;justify-content:space-between}
+
+  /* Gallery grid */
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .gallery-item{border-radius:12px;overflow:hidden;background:var(--surface);border:1px solid var(--border);aspect-ratio:1;cursor:pointer;transition:transform .22s,box-shadow .22s;position:relative;group:1}
+  .gallery-item:hover{transform:scale(1.03);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .gallery-item-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .2s;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:10px}
+  .gallery-item:hover .gallery-item-overlay{opacity:1}
+  .gallery-item-actions{display:flex;align-items:center;gap:6px}
+  .gallery-item-delete{background:rgba(244,63,94,.85);border:none;color:#fff;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;flex-shrink:0;white-space:nowrap}
+  .gallery-item-delete:hover{background:#f43f5e}
+  .gallery-item-icon-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:7px;width:30px;height:30px;flex-shrink:0;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s}
+  .gallery-item-icon-btn:hover{background:rgba(255,255,255,.26);transform:scale(1.08)}
+  .gallery-item-meta{flex:1;font-size:.72rem;color:rgba(255,255,255,.7);font-family:'JetBrains Mono',monospace;margin-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gallery-empty{color:var(--muted);padding:56px;text-align:center;grid-column:1/-1;font-size:.95rem}
+  .gallery-empty-icon{font-size:3rem;display:block;margin-bottom:14px;opacity:.5}
+  .gallery-count-badge{font-size:.78rem;font-family:'JetBrains Mono',monospace;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:3px 12px}
+
+  /* Storage notice */
+  .storage-notice{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);border-radius:10px;font-size:.78rem;color:rgba(56,189,248,.8);margin-bottom:20px}
+  .storage-notice-icon{font-size:1rem;flex-shrink:0}
+
+  /* Setup modal */
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;padding:24px}
+  .modal-backdrop.open{display:flex;animation:fadeIn .2s ease}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px;max-width:520px;width:100%;position:relative;overflow:hidden}
+  .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rainbow);background-size:300% 100%;animation:rainbowShift 4s linear infinite}
+  .modal-title{font-size:1.3rem;font-weight:800;margin-bottom:6px;padding-top:4px}
+  .modal-sub{font-size:.85rem;color:var(--muted);margin-bottom:24px;line-height:1.6}
+  .modal-step{display:flex;gap:12px;margin-bottom:18px;align-items:flex-start}
+  .modal-step-num{background:rgba(129,140,248,.2);border:1px solid rgba(129,140,248,.3);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#818cf8;flex-shrink:0;margin-top:2px}
+  .modal-step-body{flex:1}
+  .modal-step-label{font-size:.82rem;font-weight:700;margin-bottom:4px}
+  .modal-step-desc{font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:8px}
+  .modal-step-desc a{color:#38bdf8;text-decoration:none}
+  .modal-step-desc a:hover{text-decoration:underline}
+  .modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;transition:border-color .15s}
+  .modal-input:focus{border-color:rgba(129,140,248,.6)}
+  .modal-input::placeholder{color:var(--muted);opacity:.6}
+  .modal-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+  .btn-primary{background:rgba(129,140,248,.2);border-color:rgba(129,140,248,.5);color:#a5b4fc}
+  .btn-primary:hover{background:rgba(129,140,248,.3);border-color:rgba(129,140,248,.8)}
+  .setup-trigger{font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .setup-trigger:hover{color:var(--text)}
+  .modal-code{background:#0b1220;border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#a5b4fc;white-space:pre-wrap;word-break:break-all;max-height:160px;overflow-y:auto;line-height:1.5}
+  .auth-bar{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted)}
+  .auth-bar img{width:24px;height:24px;border-radius:50%}
+  .auth-bar .btn{font-size:.78rem;padding:7px 14px}
+  .google-g{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:#fff;border-radius:3px;font-weight:800;color:#4285F4;font-size:.7rem;margin-right:6px}
+
+  /* Toast */
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 22px;font-size:.88rem;font-weight:600;color:var(--text);z-index:9999;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.success{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.1);color:#4ade80}
+  .toast.error{border-color:rgba(244,63,94,.4);background:rgba(244,63,94,.1);color:#f87171}
+
+  /* Lightbox */
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;align-items:center;justify-content:center;padding:24px}
+  .lightbox.open{display:flex;animation:fadeIn .2s ease}
+  .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;box-shadow:0 28px 90px rgba(0,0,0,.7)}
+  .lightbox-close{position:absolute;top:20px;right:20px;background:var(--surface);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s}
+  .lightbox-close:hover{background:var(--surface2);transform:rotate(90deg)}
+
+  footer{text-align:center;padding:32px 0 24px;color:var(--muted);font-size:.82rem;font-family:'JetBrains Mono',monospace;border-top:1px solid var(--border);margin-top:24px;position:relative;z-index:1}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+  .reveal.visible{opacity:1;transform:none}
+
+  @media(max-width:600px){
+    .person-card{flex:0 0 150px;min-width:150px}
+    .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+    .lab-tab span.tab-label{display:none}
+    .pr-layout{grid-template-columns:1fr}
+    .gallery-header{gap:10px}
+    #vote-layout{grid-template-columns:1fr!important}
+  }
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="rainbow-bar"></div>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <header>
+    <h1 class="site-title">🌈 CIVIL MEME ARCHIVE 🌈</h1>
+    <p class="site-subtitle">// Official Archive of Team Shenanigans</p>
+    <div class="auth-bar" id="auth-bar" style="justify-content:center;margin-top:14px"></div>
+  </header>
+
+  <div id="home-view">
+    <section class="quote-section reveal">
+      <div class="quote-box"><p id="quote-text">"Click the button for today's team wisdom."</p></div>
+      <button class="btn" onclick="generateQuote()">🎲 Generate Team Quote</button>
+    </section>
+
+    <section class="cards-section reveal">
+      <h2 class="section-title">👥 The Team</h2>
+      <div class="cards-row" id="cards-grid"></div>
+    </section>
+
+    <section class="lab-section reveal">
+      <h2 class="section-title">🧪 Civil Stats Lab</h2>
+      <div class="lab-tabs">
+        <button class="lab-tab active" onclick="switchTab('power')">⚡ <span class="tab-label">Power Rankings</span></button>
+        <button class="lab-tab"        onclick="switchTab('blame')">🎰 <span class="tab-label">Blame Wheel</span></button>
+        <button class="lab-tab"        onclick="switchTab('vote')"> 🗳️ <span class="tab-label">Team Vote</span></button>
+      </div>
+
+      <div class="lab-panel active" id="panel-power">
+        <div class="pr-layout">
+          <div class="pr-person-list" id="pr-person-list"></div>
+          <div class="pr-stats-panel" id="pr-stats-panel">
+            <p style="color:var(--muted);font-style:italic">← Select a team member to view their stats</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-panel" id="panel-blame">
+        <div class="wheel-wrap">
+          <div id="wheel-display-question">Who broke prod today?</div>
+          <div class="wheel-question-row" id="wheel-questions"></div>
+          <div class="wheel-machine">
+            <div class="wheel-pointer">👇</div>
+            <svg class="wheel-svg" id="wheel-svg" viewBox="0 0 280 280"></svg>
+          </div>
+          <button class="btn" id="spin-btn" onclick="spinWheel()">🎰 Spin the Wheel</button>
+          <div class="wheel-result" id="wheel-result"></div>
+        </div>
+      </div>
+
+      <div class="lab-panel" id="panel-vote">
+        <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:24px" id="vote-layout">
+          <div>
+            <p style="font-size:.8rem;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;font-weight:700;margin-bottom:12px">Pick a Question</p>
+            <div class="vote-questions" id="vote-questions"></div>
+          </div>
+          <div class="vote-arena" id="vote-arena">
+            <div class="vote-arena-title" id="vote-arena-title">Select a question →</div>
+            <div class="vote-candidates" id="vote-candidates"></div>
+            <button class="btn vote-reset" id="vote-reset-btn" style="display:none" onclick="resetVote()">↩ Reset votes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Gallery View -->
+  <div id="gallery-view">
+    <div class="gallery-header">
+      <button class="btn" onclick="closeGallery()">← Back</button>
+      <h2 class="gallery-title" id="gallery-title"></h2>
+      <div class="gallery-actions">
+        <span class="gallery-count-badge" id="gallery-count">0 memes</span>
+        <input type="file" id="import-input" accept="application/json" style="display:none" onchange="handleImportFile(event)">
+        <button class="btn" id="import-btn" onclick="document.getElementById('import-input').click()" style="font-size:.82rem;padding:8px 14px">📥 Import</button>
+        <button class="btn" id="export-btn" onclick="exportGallery()" style="display:none;font-size:.82rem;padding:8px 14px">📤 Export</button>
+        <button class="btn btn-danger" id="clear-gallery-btn" onclick="clearGallery()" style="display:none;font-size:.82rem;padding:8px 14px">🗑 Clear All</button>
+      </div>
+    </div>
+
+    <div class="storage-notice" id="storage-notice">
+      <span class="storage-notice-icon" id="storage-notice-icon">💾</span>
+      <span id="storage-notice-text">Saved in this browser only. <span class="setup-trigger" onclick="openSetup()">☁️ Set up cloud sync</span> to share across devices with Google sign-in.</span>
+    </div>
+
+    <div class="upload-progress" id="upload-progress">
+      <div class="upload-progress-label">
+        <span id="upload-progress-text">Uploading…</span>
+        <span id="upload-progress-pct">0%</span>
+      </div>
+      <div class="upload-progress-bar-track">
+        <div class="upload-progress-bar" id="upload-progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+</div>
+
+<!-- Cloud Sync Setup Modal -->
+<div class="modal-backdrop" id="setup-modal">
+  <div class="modal">
+    <div class="modal-title">☁️ Set up Cloud Sync</div>
+    <div class="modal-sub">This uses <a href="https://supabase.com" target="_blank" style="color:#38bdf8">Supabase</a> (free tier) so memes are stored online and everyone sees the same gallery on any device, signed in with Google. One person on the team sets this up once.</div>
+
+    <div class="modal-step">
+      <div class="modal-step-num">1</div>
+      <div class="modal-step-body">
+        <div class="modal-step-label">Create a Supabase project</div>
+        <div class="modal-step-desc">Go to <a href="https://supabase.com/dashboard" target="_blank">supabase.com/dashboard</a> → sign up free → New Project.</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-step-num">2</div>
+      <div class="modal-step-body">
+        <div class="modal-step-label">Enable Google sign-in</div>
+        <div class="modal-step-desc">In your project: Authentication → Sign In / Providers → enable <strong>Google</strong> (follow Supabase's guide to plug in a Google OAuth Client ID/Secret from the Google Cloud Console). Also add this page's URL to Authentication → URL Configuration → Redirect URLs.</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-step-num">3</div>
+      <div class="modal-step-body">
+        <div class="modal-step-label">Run this setup SQL</div>
+        <div class="modal-step-desc">In your project: SQL Editor → New Query → paste & run this once. It creates the table, storage bucket, and access rules (anyone can view, only signed-in users can add/delete).</div>
+        <div class="modal-code" id="setup-sql"></div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="modal-step-num">4</div>
+      <div class="modal-step-body">
+        <div class="modal-step-label">Paste your project keys</div>
+        <div class="modal-step-desc">Project Settings → API → copy the <strong>Project URL</strong> and <strong>anon public</strong> key.</div>
+        <input class="modal-input" id="setup-url" type="text" placeholder="https://xxxxx.supabase.co" autocomplete="off" style="margin-bottom:10px">
+        <input class="modal-input" id="setup-anon-key" type="text" placeholder="anon public key…" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeSetup()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSetup()">💾 Save & Connect</button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Meme">
+</div>
+
+<footer>made with 💜 by the civil meme archive committee &nbsp;·&nbsp; v5.0</footer>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const TEAM = [
+  { id:'cuong', name:'Cuong', title:'🚧 Civil Wizard',     emoji:'🧙',
+    stats:{ coffee:72, chaos:58, meet:30, bug:81 },
+    verdict:"Cuong's bug-to-feature conversion rate is statistically impossible. Scientists are studying him." },
+  { id:'duong', name:'Duong', title:'☕ Coffee Addict',     emoji:'☕',
+    stats:{ coffee:99, chaos:40, meet:55, bug:44 },
+    verdict:"Duong runs on 3 things: coffee, coffee, and the vague memory of sleep." },
+  { id:'an',    name:'An',    title:'📑 Tab Collector',     emoji:'📑',
+    stats:{ coffee:61, chaos:47, meet:62, bug:33 },
+    verdict:"An's laptop has so many tabs, Chrome filed a noise complaint with HR." },
+  { id:'nghi',  name:'Nghi',  title:'💥 Chaos Engineer',    emoji:'💥',
+    stats:{ coffee:55, chaos:97, meet:28, bug:76 },
+    verdict:"Nghi doesn't cause chaos. Chaos causes Nghi. The distinction is important." },
+  { id:'chinh', name:'Chinh', title:'🐛 Bug Hunter',        emoji:'🐛',
+    stats:{ coffee:48, chaos:52, meet:41, bug:90 },
+    verdict:"Chinh stares at bugs until they feel personally attacked and fix themselves." },
+  { id:'tung',  name:'Tung',  title:'📅 Meeting Master',    emoji:'📅',
+    stats:{ coffee:66, chaos:35, meet:98, bug:28 },
+    verdict:"Tung once scheduled a meeting to discuss whether meetings are necessary. It was a 2-hour meeting." },
+  { id:'trang', name:'Trang', title:'👀 Keeper of Secrets', emoji:'👀',
+    stats:{ coffee:70, chaos:44, meet:59, bug:37 },
+    verdict:"Trang knew you were going to read this verdict before you clicked. She has already prepared a response." },
+];
+
+const QUOTES = [
+  "Cuong accidentally created a bug and called it a feature.",
+  "Duong survives entirely on coffee and hope.",
+  "An has 37 tabs open and uses all of them.",
+  "Nghi somehow breaks and fixes things simultaneously.",
+  "Chinh debugs by staring aggressively at the monitor.",
+  "Tung schedules meetings about scheduling meetings.",
+  "Trang knows everything before it happens.",
+  "The real civil engineering was the memes we made along the way.",
+  "Nghi's chaos level has been officially classified as a force of nature.",
+  "An opened a new tab to look up how many tabs are too many.",
+  "Trang's silence means she already knows what you're about to say.",
+  "Cuong: 'It's not a bug, it's an undocumented feature with ambition.'",
+  "Duong's veins: 60% coffee, 40% determination.",
+  "Chinh's monitor is scared of him now.",
+  "Tung has a meeting to discuss the meeting about the meeting.",
+];
+
+// ═══════════════════════════════════════════
+// STORAGE — localStorage by default, optional cloud sync via Supabase
+// ═══════════════════════════════════════════
+const LS_GALLERY = 'civil_meme_galleries'; // { personId: [ {id,url,name,uploadedAt}, ... ] }
+const LS_SUPA_CONFIG = 'civil_meme_supabase_config';
+
+function getAllGalleries() {
+  try { return JSON.parse(localStorage.getItem(LS_GALLERY)) || {}; } catch { return {}; }
+}
+function setAllGalleries(record) {
+  localStorage.setItem(LS_GALLERY, JSON.stringify(record));
+}
+
+let galleryRecord = getAllGalleries(); // local in-memory cache (used when cloud sync isn't set up)
+
+const SETUP_SQL = `create table if not exists meme_gallery (
+  id uuid primary key default gen_random_uuid(),
+  person_id text not null,
+  url text not null,
+  name text not null,
+  storage_path text,
+  uploaded_by text,
+  uploaded_at timestamptz not null default now()
+);
+alter table meme_gallery enable row level security;
+create policy "Anyone can view memes" on meme_gallery for select using (true);
+create policy "Signed-in users can add memes" on meme_gallery for insert to authenticated with check (true);
+create policy "Signed-in users can delete memes" on meme_gallery for delete to authenticated using (true);
+
+insert into storage.buckets (id, name, public) values ('memes','memes', true)
+  on conflict (id) do nothing;
+create policy "Public read memes bucket" on storage.objects for select using (bucket_id = 'memes');
+create policy "Signed-in users can upload to memes bucket" on storage.objects for insert to authenticated with check (bucket_id = 'memes');
+create policy "Signed-in users can delete from memes bucket" on storage.objects for delete to authenticated using (bucket_id = 'memes');`;
+
+// Pre-configured Supabase project — baked in so every teammate gets cloud sync
+// automatically without needing to paste keys themselves. The anon key is the
+// public client key (safe to expose), access is controlled by RLS policies.
+const BUILT_IN_SUPA_CONFIG = {
+  url: 'https://cwzyxuccvljlwsfaaocj.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3enl4dWNjdmxqbHdzZmFhb2NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3ODYxNjMsImV4cCI6MjA5ODM2MjE2M30.9U7Kx7-K-P8ehsPu-MxtusAvhkJiLUApf6NZ8oARlR0'
+};
+
+function getSupaConfig() {
+  // Always prefer the built-in config so every teammate is auto-connected.
+  if (BUILT_IN_SUPA_CONFIG.url && BUILT_IN_SUPA_CONFIG.anonKey) return BUILT_IN_SUPA_CONFIG;
+  try { return JSON.parse(localStorage.getItem(LS_SUPA_CONFIG)) || null; } catch { return null; }
+}
+function setSupaConfig(cfg) { localStorage.setItem(LS_SUPA_CONFIG, JSON.stringify(cfg)); }
+function isCloudConfigured() { const c = getSupaConfig(); return !!(c && c.url && c.anonKey); }
+
+let supaClient = null;
+let currentUser = null;
+
+function initSupabase() {
+  const cfg = getSupaConfig();
+  if (!cfg || !cfg.url || !cfg.anonKey || !window.supabase) return;
+  try {
+    supaClient = window.supabase.createClient(cfg.url, cfg.anonKey);
+  } catch (err) {
+    console.error(err);
+    return;
+  }
+  supaClient.auth.getSession().then(({ data }) => {
+    currentUser = data.session ? data.session.user : null;
+    renderAuthBar();
+    refreshCloudCounts();
+  });
+  supaClient.auth.onAuthStateChange((_event, session) => {
+    currentUser = session ? session.user : null;
+    renderAuthBar();
+    if (currentGalleryPerson) loadAndRenderGallery();
+  });
+}
+
+async function refreshCloudCounts() {
+  if (!supaClient) return;
+  const { data, error } = await supaClient.from('meme_gallery').select('person_id');
+  if (error) { console.error(error); return; }
+  const counts = {};
+  data.forEach(r => { counts[r.person_id] = (counts[r.person_id] || 0) + 1; });
+  TEAM.forEach(p => updateCardCount(p.id, counts[p.id] || 0));
+}
+
+function signInWithGoogle() {
+  if (!isCloudConfigured()) { openSetup(); return; }
+  if (!supaClient) initSupabase();
+  supaClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href.split('#')[0] } });
+}
+function signOut() {
+  if (supaClient) supaClient.auth.signOut();
+}
+
+function renderAuthBar() {
+  const bar = document.getElementById('auth-bar');
+  if (!bar) return;
+  if (!isCloudConfigured()) {
+    bar.innerHTML = `<span class="setup-trigger" onclick="openSetup()">☁️ Set up cloud sync to share memes across devices</span>`;
+    return;
+  }
+  if (currentUser) {
+    const meta = currentUser.user_metadata || {};
+    const avatar = meta.avatar_url;
+    const name = meta.full_name || meta.name || currentUser.email;
+    bar.innerHTML = `
+      ${avatar ? `<img src="${avatar}" alt="">` : ''}
+      <span>Signed in as <strong style="color:var(--text)">${name}</strong></span>
+      <button class="btn" onclick="signOut()">Sign out</button>
+    `;
+  } else {
+    bar.innerHTML = `<button class="btn btn-primary" onclick="signInWithGoogle()"><span class="google-g">G</span>Sign in with Google</button>`;
+  }
+}
+
+// ── Setup modal ──
+function openSetup() {
+  document.getElementById('setup-sql').textContent = SETUP_SQL;
+  const cfg = getSupaConfig();
+  document.getElementById('setup-url').value = cfg ? (cfg.url || '') : '';
+  document.getElementById('setup-anon-key').value = cfg ? (cfg.anonKey || '') : '';
+  document.getElementById('setup-modal').classList.add('open');
+}
+function closeSetup() { document.getElementById('setup-modal').classList.remove('open'); }
+function saveSetup() {
+  const url = document.getElementById('setup-url').value.trim();
+  const anonKey = document.getElementById('setup-anon-key').value.trim();
+  if (!url || !anonKey) { showToast('⚠️ Paste both the Project URL and anon key', 'error'); return; }
+  setSupaConfig({ url, anonKey });
+  closeSetup();
+  initSupabase();
+  document.getElementById('storage-notice-icon').textContent = '☁️';
+  document.getElementById('storage-notice-text').innerHTML = 'Cloud sync is on — memes are shared across every device. <span class="setup-trigger" onclick="openSetup()">⚙️ Edit setup</span>';
+  showToast('☁️ Cloud sync connected!', 'success');
+}
+
+function getMemeCounts() {
+  const counts = {};
+  TEAM.forEach(p => { counts[p.id] = (galleryRecord[p.id] || []).length; });
+  return counts;
+}
+
+// ── Gallery load & render ──
+async function loadAndRenderGallery() {
+  if (isCloudConfigured() && supaClient) {
+    document.getElementById('gallery-grid').innerHTML = '<div class="gallery-empty">Loading memes…</div>';
+    const { data, error } = await supaClient
+      .from('meme_gallery')
+      .select('*')
+      .eq('person_id', currentGalleryPerson.id)
+      .order('uploaded_at', { ascending: true });
+    if (error) {
+      showToast('❌ Could not load cloud gallery', 'error');
+      console.error(error);
+      galleryImages = [];
+    } else {
+      galleryImages = data.map(r => ({ id: r.id, url: r.url, name: r.name, uploadedAt: r.uploaded_at, uploadedBy: r.uploaded_by, path: r.storage_path }));
+    }
+  } else {
+    galleryRecord = getAllGalleries();
+    galleryImages = galleryRecord[currentGalleryPerson.id] || [];
+  }
+  renderGalleryGrid();
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+// ═══════════════════════════════════════════
+// TEAM CARDS
+// ═══════════════════════════════════════════
+const cardGrid = document.getElementById('cards-grid');
+const floatDurations = [4.2,3.8,4.5,4.0,3.6,4.8,4.1];
+const floatDelays    = [0,0.4,0.8,1.2,0.2,0.6,1.0];
+
+function buildCards() {
+  const counts = getMemeCounts();
+  TEAM.forEach((p,i) => {
+    const card = document.createElement('div');
+    card.className = 'person-card';
+    card.id = 'card-' + p.id;
+    card.style.setProperty('--float-dur', floatDurations[i]+'s');
+    card.style.setProperty('--float-delay', floatDelays[i]+'s');
+    card.onclick = e => { createRipple(e,card); setTimeout(() => openGallery(p), 180); };
+    const n = counts[p.id] || 0;
+    card.innerHTML = `
+      <div class="card-avatar-placeholder">${p.emoji}</div>
+      <div class="card-name">${p.name}</div>
+      <div class="card-title">${p.title}</div>
+      <span class="card-meme-count" id="count-${p.id}">${n} meme${n!==1?'s':''}</span>
+    `;
+    cardGrid.appendChild(card);
+  });
+}
+buildCards();
+renderAuthBar();
+initSupabase();
+
+function updateCardCount(personId, n) {
+  const el = document.getElementById('count-' + personId);
+  if (el) el.textContent = `${n} meme${n!==1?'s':''}`;
+}
+
+function createRipple(e, el) {
+  const r = document.createElement('span'); r.className = 'ripple';
+  const rect = el.getBoundingClientRect(), size = Math.max(rect.width,rect.height);
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  el.appendChild(r); r.addEventListener('animationend', () => r.remove());
+}
+
+// ═══════════════════════════════════════════
+// QUOTE
+// ═══════════════════════════════════════════
+let lastQ = -1;
+function generateQuote() {
+  let i; do { i = Math.floor(Math.random()*QUOTES.length); } while (i===lastQ);
+  lastQ = i;
+  const el = document.getElementById('quote-text');
+  el.classList.add('fade');
+  setTimeout(() => { el.textContent = `"${QUOTES[i]}"`; el.classList.remove('fade'); }, 220);
+}
+
+// ═══════════════════════════════════════════
+// TAB SWITCHER
+// ═══════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.lab-tab').forEach((t,i) => {
+    const ids = ['power','blame','vote'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.lab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if (id==='blame') initWheel();
+}
+
+// ═══════════════════════════════════════════
+// POWER RANKINGS
+// ═══════════════════════════════════════════
+const STATS_META = [
+  { key:'coffee', label:'☕ Coffee Power',      cls:'coffee' },
+  { key:'chaos',  label:'💥 Chaos Level',        cls:'chaos'  },
+  { key:'meet',   label:'📅 Meeting Resistance', cls:'meet'   },
+  { key:'bug',    label:'🐛 Bug Creation Rate',  cls:'bug'    },
+];
+
+const prList = document.getElementById('pr-person-list');
+TEAM.forEach(p => {
+  const btn = document.createElement('button');
+  btn.className = 'pr-person-btn';
+  btn.innerHTML = `<span class="pr-person-emoji">${p.emoji}</span><span class="pr-person-info"><div class="pr-person-name">${p.name}</div><div class="pr-person-title">${p.title}</div></span>`;
+  btn.onclick = () => selectPrPerson(p, btn);
+  prList.appendChild(btn);
+});
+
+function selectPrPerson(p, btn) {
+  document.querySelectorAll('.pr-person-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('pr-stats-panel');
+  panel.innerHTML = `
+    <div class="pr-stats-name">${p.emoji} ${p.name}</div>
+    <div class="pr-stats-subtitle">${p.title}</div>
+    ${STATS_META.map(m => `
+      <div class="stat-row">
+        <div class="stat-label-row"><span>${m.label}</span><span class="stat-val">${p.stats[m.key]}/100</span></div>
+        <div class="stat-track"><div class="stat-fill ${m.cls}" data-val="${p.stats[m.key]}" style="width:0"></div></div>
+      </div>`).join('')}
+    <div class="pr-verdict">"${p.verdict}"</div>
+  `;
+  requestAnimationFrame(() => {
+    panel.querySelectorAll('.stat-fill').forEach(bar => {
+      setTimeout(() => { bar.style.width = bar.dataset.val + '%'; }, 60);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// BLAME WHEEL
+// ═══════════════════════════════════════════
+const BLAME_QUESTIONS = [
+  { label:'Who broke prod?',            crimes: ['broke the build','pushed to main directly','forgot to test','disabled all the tests','yeeted prod DB'] },
+  { label:'Who called the 2hr meeting?', crimes: ['could have been an email','invited 14 people','had no agenda','scheduled it at 4:59pm','rescheduled 3 times'] },
+  { label:'Who ate the office snacks?',  crimes: ['ALL of them','the good ones first','and didn\'t replace them','and blamed the interns','and denied it with crumbs on their face'] },
+  { label:'Who ghosted Slack?',          crimes: ['for 4 hours','on a Monday','during an incident','and replied ✅ to nothing','and came back with "lol what did I miss"'] },
+];
+const WHEEL_COLORS = ['#f43f5e','#fb923c','#facc15','#4ade80','#38bdf8','#818cf8','#e879f9'];
+let wheelAngle = 0, isSpinning = false, activeQuestion = BLAME_QUESTIONS[0];
+
+function initWheel() {
+  const qRow = document.getElementById('wheel-questions');
+  if (qRow.children.length > 0) return;
+  BLAME_QUESTIONS.forEach((q,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'wheel-q-btn' + (i===0?' active':'');
+    btn.textContent = q.label;
+    btn.onclick = () => {
+      document.querySelectorAll('.wheel-q-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      activeQuestion = q;
+      document.getElementById('wheel-display-question').textContent = q.label;
+      document.getElementById('wheel-result').innerHTML = '';
+    };
+    qRow.appendChild(btn);
+  });
+  drawWheel(0);
+}
+
+function drawWheel(angle) {
+  const svg = document.getElementById('wheel-svg');
+  const n = TEAM.length, cx = 140, cy = 140, r = 128;
+  const slice = (2 * Math.PI) / n;
+  let html = '';
+  TEAM.forEach((p,i) => {
+    const startA = angle + i * slice - Math.PI/2;
+    const endA   = startA + slice;
+    const x1 = cx + r * Math.cos(startA), y1 = cy + r * Math.sin(startA);
+    const x2 = cx + r * Math.cos(endA),   y2 = cy + r * Math.sin(endA);
+    const midA = startA + slice/2;
+    const tx = cx + r * 0.62 * Math.cos(midA), ty = cy + r * 0.62 * Math.sin(midA);
+    const col = WHEEL_COLORS[i % WHEEL_COLORS.length];
+    html += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z" fill="${col}" opacity="0.85" stroke="#0f172a" stroke-width="2"/>`;
+    html += `<text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle" font-size="20" font-family="Inter,sans-serif">${p.emoji}</text>`;
+    const nx = cx + r * 0.85 * Math.cos(midA), ny = cy + r * 0.85 * Math.sin(midA);
+    html += `<text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="middle" font-size="9.5" font-family="Inter,sans-serif" fill="#fff" font-weight="700">${p.name}</text>`;
+  });
+  html += `<circle cx="${cx}" cy="${cy}" r="22" fill="#0f172a" stroke="#334155" stroke-width="2"/>`;
+  html += `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="16">🎰</text>`;
+  svg.innerHTML = html;
+}
+
+function spinWheel() {
+  if (isSpinning) return;
+  isSpinning = true;
+  document.getElementById('wheel-result').innerHTML = '';
+  document.getElementById('spin-btn').textContent = '🌀 Spinning...';
+  const extra = 1800 + Math.random() * 1440;
+  const target = wheelAngle + extra;
+  const duration = 3200;
+  const start = performance.now();
+  const startAngle = wheelAngle;
+  function ease(t) { return 1 - Math.pow(1-t, 4); }
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const current = startAngle + (target - startAngle) * ease(t);
+    wheelAngle = current;
+    const rad = (current % 360) * Math.PI / 180;
+    drawWheel(rad);
+    if (t < 1) { requestAnimationFrame(frame); return; }
+    isSpinning = false;
+    wheelAngle = target % 360;
+    const n = TEAM.length, slice = 360 / n;
+    const norm = ((270 - wheelAngle % 360) + 360) % 360;
+    const idx  = Math.floor(norm / slice) % n;
+    const winner = TEAM[idx];
+    const crime  = activeQuestion.crimes[Math.floor(Math.random()*activeQuestion.crimes.length)];
+    document.getElementById('spin-btn').textContent = '🎰 Spin the Wheel';
+    document.getElementById('wheel-result').innerHTML = `
+      <div class="wheel-result-name">${winner.emoji} ${winner.name}!</div>
+      <div class="wheel-result-crime">Verdict: ${winner.name} ${crime}</div>
+    `;
+  }
+  requestAnimationFrame(frame);
+}
+
+// ═══════════════════════════════════════════
+// TEAM VOTE
+// ═══════════════════════════════════════════
+const VOTE_QUESTIONS = [
+  { id:'prod',    label:'💀 Who broke prod today?'           },
+  { id:'coffee',  label:'☕ Who stole the last coffee?'      },
+  { id:'meeting', label:'😴 Who zoned out hardest in the meeting?' },
+  { id:'meme',    label:'🏆 Who sends the best memes?'       },
+  { id:'carry',   label:'💪 Who carries the team hardest?'   },
+];
+
+let voteData = {};
+let votedFor  = {};
+let activeVoteQ = null;
+
+VOTE_QUESTIONS.forEach(q => {
+  voteData[q.id] = {};
+  TEAM.forEach(p => { voteData[q.id][p.id] = 0; });
+});
+
+const voteQContainer = document.getElementById('vote-questions');
+VOTE_QUESTIONS.forEach((q,i) => {
+  const btn = document.createElement('button');
+  btn.className = 'vote-q-btn';
+  btn.textContent = q.label;
+  btn.onclick = () => { selectVoteQ(q, btn); };
+  voteQContainer.appendChild(btn);
+  if (i===0) { activeVoteQ = q; btn.classList.add('active'); renderVoteArena(); }
+});
+
+function selectVoteQ(q, btn) {
+  document.querySelectorAll('.vote-q-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeVoteQ = q;
+  renderVoteArena();
+}
+
+function renderVoteArena() {
+  const q = activeVoteQ;
+  document.getElementById('vote-arena-title').textContent = q.label;
+  const container = document.getElementById('vote-candidates');
+  container.innerHTML = '';
+  const counts = voteData[q.id];
+  const total  = Object.values(counts).reduce((a,b)=>a+b,0);
+  const myVote = votedFor[q.id];
+  TEAM.forEach(p => {
+    const c = counts[p.id], pct = total > 0 ? Math.round(c/total*100) : 0;
+    const div = document.createElement('div');
+    div.className = 'vote-candidate' + (myVote===p.id?' voted':'');
+    div.innerHTML = `
+      <div class="vote-cand-fill" style="background:${WHEEL_COLORS[TEAM.indexOf(p)%7]};width:${pct}%"></div>
+      <span class="vote-cand-emoji">${p.emoji}</span>
+      <span class="vote-cand-name">${p.name}</span>
+      <div class="vote-cand-bar-wrap">
+        <div class="vote-cand-track"><div class="vote-cand-fill-bar" style="width:${pct}%"></div></div>
+        <div class="vote-cand-pct">${pct}%</div>
+      </div>
+      <span class="vote-cand-count">${c}</span>
+    `;
+    if (!myVote) { div.style.cursor='pointer'; div.onclick = () => castVote(q.id, p.id); }
+    container.appendChild(div);
+  });
+  const resetBtn = document.getElementById('vote-reset-btn');
+  resetBtn.style.display = total > 0 ? '' : 'none';
+}
+
+function castVote(qId, personId) {
+  if (votedFor[qId]) return;
+  votedFor[qId] = personId;
+  voteData[qId][personId]++;
+  renderVoteArena();
+}
+
+function resetVote() {
+  if (!activeVoteQ) return;
+  TEAM.forEach(p => { voteData[activeVoteQ.id][p.id] = 0; });
+  delete votedFor[activeVoteQ.id];
+  renderVoteArena();
+}
+
+// ═══════════════════════════════════════════
+// GALLERY WITH UPLOAD
+// ═══════════════════════════════════════════
+let currentGalleryPerson = null;
+let galleryImages = []; // { id, url, name, uploadedAt }
+
+function openGallery(person) {
+  currentGalleryPerson = person;
+  const home = document.getElementById('home-view');
+  const gallery = document.getElementById('gallery-view');
+
+  document.getElementById('gallery-title').textContent = `${person.emoji} ${person.name}'s Gallery`;
+  home.style.display = 'none';
+  gallery.style.display = 'block';
+  gallery.animate([{opacity:0,transform:'translateY(22px)'},{opacity:1,transform:'translateY(0)'}],
+    {duration:380,easing:'cubic-bezier(0.22,1,0.36,1)',fill:'both'});
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if (isCloudConfigured()) {
+    document.getElementById('storage-notice-icon').textContent = '☁️';
+    document.getElementById('storage-notice-text').innerHTML = 'Cloud sync is on — memes are shared across every device. <span class="setup-trigger" onclick="openSetup()">⚙️ Edit setup</span>';
+  } else {
+    document.getElementById('storage-notice-icon').textContent = '💾';
+    document.getElementById('storage-notice-text').innerHTML = 'Saved in this browser only. <span class="setup-trigger" onclick="openSetup()">☁️ Set up cloud sync</span> to share across devices with Google sign-in.';
+  }
+
+  // Load this person's images (cloud if configured, otherwise local)
+  loadAndRenderGallery();
+}
+
+function renderGalleryGrid() {
+  const grid = document.getElementById('gallery-grid');
+  const countBadge = document.getElementById('gallery-count');
+  const clearBtn = document.getElementById('clear-gallery-btn');
+  const exportBtn = document.getElementById('export-btn');
+  grid.innerHTML = '';
+
+  const n = galleryImages.length;
+  countBadge.textContent = `${n} meme${n!==1?'s':''}`;
+  clearBtn.style.display = n > 0 ? '' : 'none';
+  exportBtn.style.display = n > 0 ? '' : 'none';
+  updateCardCount(currentGalleryPerson.id, n);
+
+  const needsAuth = isCloudConfigured() && !currentUser;
+
+  // Always render the + upload tile first
+  const uploadTile = document.createElement('div');
+  uploadTile.className = 'upload-tile';
+  uploadTile.id = 'upload-tile';
+
+  if (needsAuth) {
+    uploadTile.innerHTML = `
+      <span class="upload-tile-plus">🔒</span>
+      <span class="upload-tile-label">Sign in to add memes</span>
+    `;
+    uploadTile.style.cursor = 'pointer';
+    uploadTile.onclick = signInWithGoogle;
+    grid.appendChild(uploadTile);
+    galleryImages.forEach((img, idx) => renderGalleryItem(grid, img, idx));
+    return;
+  }
+
+  uploadTile.innerHTML = `
+    <input type="file" id="file-input" accept="image/*" multiple onchange="handleFileSelect(event)">
+    <span class="upload-tile-plus">+</span>
+    <span class="upload-tile-label">Add meme</span>
+  `;
+  uploadTile.addEventListener('dragover', e => { e.preventDefault(); uploadTile.classList.add('drag-over'); });
+  uploadTile.addEventListener('dragleave', () => uploadTile.classList.remove('drag-over'));
+  uploadTile.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadTile.classList.remove('drag-over');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (files.length) processFiles(files);
+  });
+  grid.appendChild(uploadTile);
+
+  galleryImages.forEach((img, idx) => renderGalleryItem(grid, img, idx));
+}
+
+function renderGalleryItem(grid, img, idx) {
+  const item = document.createElement('div');
+  item.className = 'gallery-item';
+  const canEdit = !(isCloudConfigured() && !currentUser);
+  item.innerHTML = `
+    <img src="${img.url}" alt="${img.name}" loading="lazy">
+    <div class="gallery-item-overlay">
+      <div class="gallery-item-actions">
+        <span class="gallery-item-meta">${img.name}</span>
+        <button class="gallery-item-icon-btn" title="Preview" onclick="event.stopPropagation(); openLightbox('${img.url}')">🔍</button>
+        <button class="gallery-item-icon-btn" title="Download" onclick="event.stopPropagation(); downloadImage('${img.url}','${img.name.replace(/'/g,"\\'")}')">⬇</button>
+        ${canEdit ? `<button class="gallery-item-delete" onclick="deleteImage(event,${idx})">🗑 Delete</button>` : ''}
+      </div>
+    </div>
+  `;
+  item.querySelector('img').onclick = () => openLightbox(img.url);
+  grid.appendChild(item);
+}
+
+function downloadImage(url, name) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name || 'meme.png';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('⬇ Downloading...', '');
+}
+
+async function deleteImage(e, idx) {
+  e.stopPropagation();
+  const cloud = isCloudConfigured() && supaClient;
+  if (cloud && !currentUser) { showToast('🔒 Sign in with Google to delete memes', 'error'); return; }
+
+  const img = galleryImages[idx];
+  galleryImages.splice(idx, 1);
+  try {
+    if (cloud) {
+      const { error } = await supaClient.from('meme_gallery').delete().eq('id', img.id);
+      if (error) throw error;
+      if (img.path) await supaClient.storage.from('memes').remove([img.path]);
+      updateCardCount(currentGalleryPerson.id, galleryImages.length);
+    } else {
+      saveGalleryImages(currentGalleryPerson.id, galleryImages);
+    }
+    showToast('🗑 Meme deleted', '');
+  } catch (err) {
+    galleryImages.splice(idx, 0, img); // restore on failure
+    showToast('❌ Could not delete — try again', 'error');
+    console.error(err);
+  }
+  renderGalleryGrid();
+}
+
+async function clearGallery() {
+  if (!confirm(`Clear ALL memes from ${currentGalleryPerson.name}'s gallery?`)) return;
+  const cloud = isCloudConfigured() && supaClient;
+  if (cloud && !currentUser) { showToast('🔒 Sign in with Google to clear the gallery', 'error'); return; }
+
+  try {
+    if (cloud) {
+      const ids = galleryImages.map(i => i.id);
+      const paths = galleryImages.filter(i => i.path).map(i => i.path);
+      if (ids.length) {
+        const { error } = await supaClient.from('meme_gallery').delete().in('id', ids);
+        if (error) throw error;
+      }
+      if (paths.length) await supaClient.storage.from('memes').remove(paths);
+      updateCardCount(currentGalleryPerson.id, 0);
+    } else {
+      saveGalleryImages(currentGalleryPerson.id, []);
+    }
+    galleryImages = [];
+    showToast('🧹 Gallery cleared', '');
+  } catch (err) {
+    showToast('❌ Could not clear gallery — try again', 'error');
+    console.error(err);
+  }
+  renderGalleryGrid();
+}
+
+function closeGallery() {
+  document.getElementById('home-view').style.display = '';
+  document.getElementById('gallery-view').style.display = 'none';
+  currentGalleryPerson = null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Export & Import (manual sharing between browsers/devices) ──
+function exportGallery() {
+  const person = currentGalleryPerson;
+  const payload = { personId: person.id, personName: person.name, images: galleryImages };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `meme-gallery-${person.id}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('📤 Exported! Send this file to a teammate to share these memes.', 'success');
+}
+
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const payload = JSON.parse(reader.result);
+      const incoming = Array.isArray(payload) ? payload : payload.images;
+      if (!Array.isArray(incoming)) throw new Error('Not a gallery file');
+
+      const existingIds = new Set(galleryImages.map(i => i.id));
+      const merged = galleryImages.concat(incoming.filter(i => !existingIds.has(i.id)));
+      galleryImages = merged;
+      saveGalleryImages(currentGalleryPerson.id, galleryImages);
+      renderGalleryGrid();
+      showToast(`📥 Imported ${incoming.length} meme${incoming.length!==1?'s':''}!`, 'success');
+    } catch (err) {
+      showToast('❌ That doesn\'t look like a gallery export file', 'error');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  if (files.length) processFiles(files);
+  e.target.value = ''; // reset so same file can be re-uploaded
+}
+
+const MAX_SIZE = 15 * 1024 * 1024; // 15 MB raw upload (gets downscaled before saving)
+
+async function processFiles(files) {
+  const cloud = isCloudConfigured() && supaClient;
+  if (cloud && !currentUser) {
+    showToast('🔒 Sign in with Google to add memes', 'error');
+    return;
+  }
+
+  const valid = files.filter(f => {
+    if (!f.type.startsWith('image/')) { showToast(`⚠️ ${f.name} isn't an image — skipped`, 'error'); return false; }
+    if (f.size > MAX_SIZE) { showToast(`⚠️ ${f.name} is over 15 MB — skipped`, 'error'); return false; }
+    return true;
+  });
+  if (!valid.length) return;
+
+  const progressEl = document.getElementById('upload-progress');
+  const barEl      = document.getElementById('upload-progress-bar');
+  const textEl     = document.getElementById('upload-progress-text');
+  const pctEl      = document.getElementById('upload-progress-pct');
+  progressEl.classList.add('show');
+
+  await saveGalleryImages_async(valid, progressEl, barEl, textEl, pctEl);
+}
+
+async function saveGalleryImages_async(valid, progressEl, barEl, textEl, pctEl) {
+  const cloud = isCloudConfigured() && supaClient;
+  let uploadedCount = 0;
+
+  for (let i = 0; i < valid.length; i++) {
+    const file = valid[i];
+    const pct = Math.round((i / valid.length) * 100);
+    textEl.textContent = `Adding ${file.name}`;
+    pctEl.textContent = pct + '%';
+    barEl.style.width = pct + '%';
+
+    try {
+      const { blob, dataUrl, mime, ext } = await resizeImageToBlob(file);
+
+      if (cloud) {
+        const path = `${currentGalleryPerson.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: upErr } = await supaClient.storage.from('memes').upload(path, blob, { contentType: mime });
+        if (upErr) throw upErr;
+        const { data: pub } = supaClient.storage.from('memes').getPublicUrl(path);
+        const row = {
+          person_id: currentGalleryPerson.id,
+          url: pub.publicUrl,
+          name: file.name,
+          storage_path: path,
+          uploaded_by: currentUser.email
+        };
+        const { data: inserted, error: insErr } = await supaClient.from('meme_gallery').insert(row).select().single();
+        if (insErr) throw insErr;
+        galleryImages.push({ id: inserted.id, url: inserted.url, name: inserted.name, uploadedAt: inserted.uploaded_at, uploadedBy: inserted.uploaded_by, path: inserted.storage_path });
+      } else {
+        galleryImages.push({
+          id: Date.now() + '_' + Math.random().toString(36).slice(2),
+          url: dataUrl,
+          name: file.name,
+          uploadedAt: new Date().toISOString()
+        });
+      }
+      uploadedCount++;
+    } catch (err) {
+      showToast(`❌ Failed to add ${file.name}`, 'error');
+      console.error(err);
+    }
+  }
+
+  barEl.style.width = '100%';
+  pctEl.textContent = '100%';
+  textEl.textContent = 'Saving...';
+
+  if (cloud) {
+    updateCardCount(currentGalleryPerson.id, galleryImages.length);
+  } else {
+    try {
+      saveGalleryImages(currentGalleryPerson.id, galleryImages);
+    } catch (err) {
+      showToast('❌ Browser storage is full — try Export to back up & clear some memes', 'error');
+      console.error(err);
+    }
+  }
+  renderGalleryGrid();
+
+  setTimeout(() => {
+    progressEl.classList.remove('show');
+    barEl.style.width = '0';
+  }, 600);
+
+  if (uploadedCount) showToast(`🎉 ${uploadedCount} meme${uploadedCount!==1?'s':''} added!`, 'success');
+}
+
+// Save this person's gallery into the local-only localStorage record (no cloud sync configured)
+function saveGalleryImages(personId, images) {
+  galleryRecord[personId] = images;
+  setAllGalleries(galleryRecord);
+  updateCardCount(personId, images.length);
+}
+
+// Read a file, downscale it, and return both a Blob (for cloud upload) and a data URL (for local storage/preview)
+function resizeImageToBlob(file, maxDim = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const isPng = file.type === 'image/png' && file.size < 400 * 1024; // keep small PNGs (memes w/ transparency)
+        const mime = isPng ? 'image/png' : 'image/jpeg';
+        const ext = isPng ? 'png' : 'jpg';
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('toBlob failed')); return; }
+          const fr = new FileReader();
+          fr.onerror = reject;
+          fr.onload = () => resolve({ blob, dataUrl: fr.result, mime, ext });
+          fr.readAsDataURL(blob);
+        }, mime, quality);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Lightbox ──
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+
+// ═══════════════════════════════════════════
+// MOUSE + SCROLL + PARTICLES
+// ═══════════════════════════════════════════
+document.addEventListener('mousemove', e => {
+  document.body.style.setProperty('--mx', e.clientX+'px');
+  document.body.style.setProperty('--my', e.clientY+'px');
+});
+
+const revealEls = document.querySelectorAll('.reveal');
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(en => { if(en.isIntersecting){en.target.classList.add('visible');ro.unobserve(en.target);} });
+},{ threshold:.1 });
+revealEls.forEach(el => ro.observe(el));
+
+(function(){
+  const canvas = document.getElementById('particles'), ctx = canvas.getContext('2d');
+  const COLORS = ['#f43f5e','#fb923c','#facc15','#4ade80','#38bdf8','#818cf8','#e879f9'];
+  let W, H, particles;
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function mk(){ return { x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.5+.4, dx:(Math.random()-.5)*.3, dy:(Math.random()-.5)*.3, color:COLORS[Math.floor(Math.random()*COLORS.length)], alpha:Math.random()*.35+.05 }; }
+  function init(){ resize(); particles = Array.from({length:90}, mk); }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+      p.x += p.dx; p.y += p.dy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+</script>
+</body>
+</html>
