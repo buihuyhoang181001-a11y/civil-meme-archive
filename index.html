@@ -857,7 +857,7 @@ function spinWheel() {
     wheelAngle = target % 360;
     const n = TEAM.length, slice = 360 / n;
     const norm = ((90 - (wheelAngle % 360) + 360) % 360);
-    const idx = (Math.floor(norm / slice) + 2) % n;
+    const idx = (Math.floor(norm / slice)+1) % n;
     const winner = TEAM[idx];
     const crime  = activeQuestion.crimes[Math.floor(Math.random()*activeQuestion.crimes.length)];
     document.getElementById('spin-btn').textContent = '🎰 Spin the Wheel';
