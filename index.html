@@ -405,7 +405,7 @@
   <img id="lightbox-img" src="" alt="Meme">
 </div>
 
-<footer>made with 💜 by the civil meme archive committee &nbsp;·&nbsp; v5.0</footer>
+<footer>made with 💜 by the civil meme archive committee &nbsp;·&nbsp; v1.0</footer>
 
 <script>
 // ═══════════════════════════════════════════
@@ -434,7 +434,19 @@ const TEAM = [
     stats:{ coffee:70, chaos:44, meet:59, bug:37 },
     verdict:"Trang knew you were going to read this verdict before you clicked. She has already prepared a response." },
 ];
+// Randomize stats (60-100), calculate total power, and sort descending
+TEAM.forEach(member => {
+  member.stats = {
+    aura: Math.floor(Math.random() * 41) + 60,
+    luck: Math.floor(Math.random() * 41) + 60,
+    iq: Math.floor(Math.random() * 41) + 60,
+    rizz: Math.floor(Math.random() * 41) + 60
+  };
+  member.power = member.stats.aura + member.stats.luck + member.stats.iq + member.stats.rizz;
+});
 
+// Sort the team array to make it a true leaderboard
+TEAM.sort((a, b) => b.power - a.power);
 const QUOTES = [
 "Cuong is still reviewing the model. The project finished three weeks ago.",
 
@@ -745,17 +757,24 @@ function switchTab(id) {
 // POWER RANKINGS
 // ═══════════════════════════════════════════
 const STATS_META = [
-  { key:'coffee', label:'☕ Coffee Power',      cls:'coffee' },
-  { key:'chaos',  label:'💥 Chaos Level',        cls:'chaos'  },
-  { key:'meet',   label:'📅 Meeting Resistance', cls:'meet'   },
-  { key:'bug',    label:'🐛 Bug Creation Rate',  cls:'bug'    },
+  { key: 'aura', label: '✨ Aura', cls: 'coffee' },
+  { key: 'luck', label: '🍀 Luck', cls: 'meet' },
+  { key: 'iq',   label: '🧠 IQ', cls: 'bug' },
+  { key: 'rizz', label: '😏 Rizz', cls: 'chaos' },
 ];
 
 const prList = document.getElementById('pr-person-list');
-TEAM.forEach(p => {
+prList.innerHTML = ''; // Clear just in case
+TEAM.forEach((p, index) => {
   const btn = document.createElement('button');
   btn.className = 'pr-person-btn';
-  btn.innerHTML = `<span class="pr-person-emoji">${p.emoji}</span><span class="pr-person-info"><div class="pr-person-name">${p.name}</div><div class="pr-person-title">${p.title}</div></span>`;
+  btn.innerHTML = `
+    <span class="pr-person-emoji">${p.emoji}</span>
+    <span class="pr-person-info">
+      <div class="pr-person-name">#${index + 1} ${p.name}</div>
+      <div class="pr-person-title">Power: ${p.power}</div>
+    </span>
+  `;
   btn.onclick = () => selectPrPerson(p, btn);
   prList.appendChild(btn);
 });
@@ -764,21 +783,55 @@ function selectPrPerson(p, btn) {
   document.querySelectorAll('.pr-person-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const panel = document.getElementById('pr-stats-panel');
+  
+  // Inject the HTML with 0s wrapped in a .count-up span
   panel.innerHTML = `
     <div class="pr-stats-name">${p.emoji} ${p.name}</div>
-    <div class="pr-stats-subtitle">${p.title}</div>
+    <div class="pr-stats-subtitle" style="font-size: 1rem; color: var(--text);">
+      Total Power: <strong style="color: var(--r4);" class="count-up" data-target="${p.power}">0</strong>
+    </div>
     ${STATS_META.map(m => `
       <div class="stat-row">
-        <div class="stat-label-row"><span>${m.label}</span><span class="stat-val">${p.stats[m.key]}/100</span></div>
+        <div class="stat-label-row">
+          <span>${m.label}</span>
+          <span class="stat-val"><span class="count-up" data-target="${p.stats[m.key]}">0</span>/100</span>
+        </div>
         <div class="stat-track"><div class="stat-fill ${m.cls}" data-val="${p.stats[m.key]}" style="width:0"></div></div>
       </div>`).join('')}
-    <div class="pr-verdict">"${p.verdict}"</div>
+    <div class="pr-verdict" style="margin-top: 24px;">"${p.verdict}"</div>
   `;
+
   requestAnimationFrame(() => {
+    // 1. Animate the progress bars filling up
     panel.querySelectorAll('.stat-fill').forEach(bar => {
       setTimeout(() => { bar.style.width = bar.dataset.val + '%'; }, 60);
     });
+
+    // 2. Animate the numbers counting up
+    panel.querySelectorAll('.count-up').forEach(el => {
+      const target = parseInt(el.getAttribute('data-target'), 10);
+      animateValue(el, 0, target, 1000); // 1000ms = 1 second
+    });
   });
+}
+
+// The Count-Up Helper Function
+function animateValue(obj, start, end, duration) {
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    
+    // easeOutQuart equation for a fast start and smooth deceleration
+    const easeProgress = 1 - Math.pow(1 - progress, 4);
+    
+    obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+    
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  window.requestAnimationFrame(step);
 }
 
 // ═══════════════════════════════════════════
