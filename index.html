@@ -399,7 +399,17 @@
     </div>
   </div>
 </div>
-
+<div class="modal-backdrop" id="admin-modal">
+  <div class="modal" style="max-width: 520px;">
+    <div class="modal-title">👑 Admin Dashboard</div>
+    <div class="modal-sub">Approve or revoke team members' access to the archive.</div>
+    <div id="admin-user-list" style="display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;margin-bottom:20px;padding-right:8px;">
+      </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeAdmin()">Close</button>
+    </div>
+  </div>
+</div>
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="Meme">
@@ -408,6 +418,7 @@
 <footer>made with 💜 by the civil meme archive committee &nbsp;·&nbsp; v1.0</footer>
 
 <script>
+  let userAccess = { is_approved: false, is_admin: false };
 // ═══════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════
@@ -578,8 +589,26 @@ function initSupabase() {
     renderAuthBar();
     refreshCloudCounts();
   });
-  supaClient.auth.onAuthStateChange((_event, session) => {
+  supaClient.auth.onAuthStateChange(async (_event, session) => {
     currentUser = session ? session.user : null;
+    
+    if (currentUser) {
+      // Check if user is in the approval table
+      const { data } = await supaClient.from('approved_users').select('*').eq('email', currentUser.email).single();
+      
+      if (data) {
+        userAccess = data;
+      } else {
+        // First time login! Request access automatically.
+        const name = currentUser.user_metadata?.full_name || currentUser.email;
+        await supaClient.from('approved_users').insert({ email: currentUser.email, name: name });
+        userAccess = { is_approved: false, is_admin: false };
+        showToast('⏳ Access requested! Waiting for admin approval.', '');
+      }
+    } else {
+      userAccess = { is_approved: false, is_admin: false };
+    }
+    
     renderAuthBar();
     if (currentGalleryPerson) loadAndRenderGallery();
   });
@@ -617,6 +646,7 @@ function renderAuthBar() {
     bar.innerHTML = `
       ${avatar ? `<img src="${avatar}" alt="">` : ''}
       <span>Signed in as <strong style="color:var(--text)">${name}</strong></span>
+      ${userAccess.is_admin ? `<button class="btn" style="border-color:#facc15;color:#facc15;" onclick="openAdmin()">👑 Admin</button>` : ''}
       <button class="btn" onclick="signOut()">Sign out</button>
     `;
   } else {
@@ -1114,24 +1144,31 @@ function renderGalleryGrid() {
 
   const n = galleryImages.length;
   countBadge.textContent = `${n} meme${n!==1?'s':''}`;
-  clearBtn.style.display = n > 0 ? '' : 'none';
+ // Authorization Check (NEW)
+  const isCloud = isCloudConfigured() && supaClient;
+  const isAuthorized = !isCloud || (currentUser && userAccess.is_approved);
+
+  clearBtn.style.display = (n > 0 && isAuthorized) ? '' : 'none';
   exportBtn.style.display = n > 0 ? '' : 'none';
   updateCardCount(currentGalleryPerson.id, n);
-
-  const needsAuth = isCloudConfigured() && !currentUser;
 
   // Always render the + upload tile first
   const uploadTile = document.createElement('div');
   uploadTile.className = 'upload-tile';
   uploadTile.id = 'upload-tile';
 
-  if (needsAuth) {
+  if (!isAuthorized) {
     uploadTile.innerHTML = `
       <span class="upload-tile-plus">🔒</span>
-      <span class="upload-tile-label">Sign in to add memes</span>
+      <span class="upload-tile-label">${currentUser ? 'View Only Mode' : 'Sign in to add memes'}</span>
     `;
-    uploadTile.style.cursor = 'pointer';
-    uploadTile.onclick = signInWithGoogle;
+    if (!currentUser) {
+        uploadTile.style.cursor = 'pointer';
+        uploadTile.onclick = signInWithGoogle;
+    } else {
+        uploadTile.style.cursor = 'not-allowed';
+        uploadTile.onclick = () => showToast('🔒 Waiting for Admin approval.', 'error');
+    }
     grid.appendChild(uploadTile);
     galleryImages.forEach((img, idx) => renderGalleryItem(grid, img, idx));
     return;
@@ -1467,6 +1504,39 @@ revealEls.forEach(el => ro.observe(el));
   window.addEventListener('resize', resize);
   init(); draw();
 })();
+// ── Admin Panel Functions ──
+async function openAdmin() {
+  document.getElementById('admin-modal').classList.add('open');
+  const listEl = document.getElementById('admin-user-list');
+  listEl.innerHTML = '<div style="color:var(--muted);text-align:center;">Loading users...</div>';
+  
+  const { data, error } = await supaClient.from('approved_users').select('*').order('created_at', { ascending: false });
+  if (error) { listEl.innerHTML = 'Error loading users.'; return; }
+  
+  listEl.innerHTML = data.map(u => `
+    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface2); padding:12px 16px; border-radius:10px; border:1px solid var(--border);">
+      <div>
+        <div style="font-weight:700; font-size:0.95rem;">${u.name} ${u.is_admin ? '👑' : ''}</div>
+        <div style="font-size:0.8rem; color:var(--muted);">${u.email}</div>
+      </div>
+      ${!u.is_admin ? `
+        <button class="btn ${u.is_approved ? 'btn-danger' : 'btn-primary'}" 
+                style="padding: 6px 14px; font-size: 0.8rem;" 
+                onclick="toggleApproval('${u.email}', ${!u.is_approved})">
+          ${u.is_approved ? 'Revoke' : '✅ Approve'}
+        </button>
+      ` : '<span style="font-size:0.8rem;color:var(--muted);">Admin</span>'}
+    </div>
+  `).join('');
+}
+
+function closeAdmin() { document.getElementById('admin-modal').classList.remove('open'); }
+
+async function toggleApproval(email, newStatus) {
+  await supaClient.from('approved_users').update({ is_approved: newStatus }).eq('email', email);
+  showToast(newStatus ? '✅ Access Approved' : '🚫 Access Revoked', newStatus ? 'success' : 'error');
+  openAdmin(); // Refresh the list
+}
 </script>
 </body>
 </html>
