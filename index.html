@@ -1195,7 +1195,10 @@ function renderGalleryGrid() {
 function renderGalleryItem(grid, img, idx) {
   const item = document.createElement('div');
   item.className = 'gallery-item';
-  const canEdit = !(isCloudConfigured() && !currentUser);
+  
+  // THIS IS THE FIX: Check if they are actually approved, not just logged in!
+  const canEdit = !isCloudConfigured() || (currentUser && userAccess.is_approved);
+  
   item.innerHTML = `
     <img src="${img.url}" alt="${img.name}" loading="lazy">
     <div class="gallery-item-overlay">
