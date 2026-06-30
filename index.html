@@ -61,7 +61,7 @@
 
   .cards-section{margin-bottom:64px}
   .cards-row{display:flex;gap:20px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-  .cards-row::-webkit-scrollbar{height:4px}
+  .cards-row::-webkit-scrollbar{height:12px}
   .cards-row::-webkit-scrollbar-track{background:transparent}
   .cards-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
   .person-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px 24px 26px;text-align:center;cursor:pointer;position:relative;overflow:hidden;flex:0 0 170px;min-width:170px;scroll-snap-align:start;animation:floatCard var(--float-dur,4s) ease-in-out infinite;animation-delay:var(--float-delay,0s);transition:transform .28s cubic-bezier(.34,1.56,.64,1),box-shadow .28s;-webkit-tap-highlight-color:transparent}
@@ -258,7 +258,7 @@
 <div class="container">
   <header>
     <h1 class="site-title">🌈 CIVIL MEME ARCHIVE 🌈</h1>
-    <p class="site-subtitle">// Official Archive of Team Shenanigans</p>
+    <p class="site-subtitle">Official Archive of Team Shenanigans</p>
     <div class="auth-bar" id="auth-bar" style="justify-content:center;margin-top:14px"></div>
   </header>
 
@@ -412,45 +412,90 @@
 // DATA
 // ═══════════════════════════════════════════
 const TEAM = [
-  { id:'cuong', name:'Cuong', title:'🚧 Civil Wizard',     emoji:'🧙',
+  { id:'Cường', name:'Cường', title:'Cường cầu cạn',     emoji:'🌉',
     stats:{ coffee:72, chaos:58, meet:30, bug:81 },
     verdict:"Cuong's bug-to-feature conversion rate is statistically impossible. Scientists are studying him." },
-  { id:'duong', name:'Duong', title:'☕ Coffee Addict',     emoji:'☕',
+  { id:'Dương', name:'Dương', title:'Dương dịu dàng',     emoji:'🌊',
     stats:{ coffee:99, chaos:40, meet:55, bug:44 },
     verdict:"Duong runs on 3 things: coffee, coffee, and the vague memory of sleep." },
-  { id:'an',    name:'An',    title:'📑 Tab Collector',     emoji:'📑',
+  { id:'An',    name:'An',    title:'An ấm áp',     emoji:'🌞',
     stats:{ coffee:61, chaos:47, meet:62, bug:33 },
     verdict:"An's laptop has so many tabs, Chrome filed a noise complaint with HR." },
-  { id:'nghi',  name:'Nghi',  title:'💥 Chaos Engineer',    emoji:'💥',
+  { id:'nghi',  name:'Nghị',  title:'Nghị nghịch ngợm',    emoji:'💥',
     stats:{ coffee:55, chaos:97, meet:28, bug:76 },
     verdict:"Nghi doesn't cause chaos. Chaos causes Nghi. The distinction is important." },
-  { id:'chinh', name:'Chinh', title:'🐛 Bug Hunter',        emoji:'🐛',
+  { id:'chinh', name:'Chính', title:'Chính hoàn hảo',        emoji:'🐛',
     stats:{ coffee:48, chaos:52, meet:41, bug:90 },
     verdict:"Chinh stares at bugs until they feel personally attacked and fix themselves." },
-  { id:'tung',  name:'Tung',  title:'📅 Meeting Master',    emoji:'📅',
+  { id:'tung',  name:'Tùng',  title:'Tùng tưng tửng',    emoji:'🤪',
     stats:{ coffee:66, chaos:35, meet:98, bug:28 },
     verdict:"Tung once scheduled a meeting to discuss whether meetings are necessary. It was a 2-hour meeting." },
-  { id:'trang', name:'Trang', title:'👀 Keeper of Secrets', emoji:'👀',
+  { id:'trang', name:'Trang', title:'Trang tròn trịa', emoji:'👀',
     stats:{ coffee:70, chaos:44, meet:59, bug:37 },
     verdict:"Trang knew you were going to read this verdict before you clicked. She has already prepared a response." },
 ];
 
 const QUOTES = [
-  "Cuong accidentally created a bug and called it a feature.",
-  "Duong survives entirely on coffee and hope.",
-  "An has 37 tabs open and uses all of them.",
-  "Nghi somehow breaks and fixes things simultaneously.",
-  "Chinh debugs by staring aggressively at the monitor.",
-  "Tung schedules meetings about scheduling meetings.",
-  "Trang knows everything before it happens.",
-  "The real civil engineering was the memes we made along the way.",
-  "Nghi's chaos level has been officially classified as a force of nature.",
-  "An opened a new tab to look up how many tabs are too many.",
-  "Trang's silence means she already knows what you're about to say.",
-  "Cuong: 'It's not a bug, it's an undocumented feature with ambition.'",
-  "Duong's veins: 60% coffee, 40% determination.",
-  "Chinh's monitor is scared of him now.",
-  "Tung has a meeting to discuss the meeting about the meeting.",
+"Cuong is still reviewing the model. The project finished three weeks ago.",
+
+"Duong's coffee budget has officially been moved to project expenses.",
+
+"An opened another browser tab. Nobody knows why anymore.",
+
+"Nghi found a clash that wasn't there five minutes ago.",
+
+"Chinh fixed the issue by staring at it aggressively.",
+
+"Tung scheduled a meeting to discuss the meeting about the meeting.",
+
+"Trang knew about the design change before the architect did.",
+
+"Cuong double-checked the dimensions. Then checked them again.",
+
+"Duong's blood type is now Coffee Positive.",
+
+"An's browser currently consumes more RAM than Revit.",
+
+"Nghi touched the model. The warning count doubled.",
+
+"Chinh doesn't get bugs. Bugs get Chinh.",
+
+"Tung has a calendar event to create more calendar events.",
+
+"Trang already knows who forgot to sync.",
+
+"Cuong treats every model like it's a nuclear reactor.",
+
+"Duong measures productivity in cups of coffee per hour.",
+
+"An said 'I only have a few tabs open.' Nobody believed him.",
+
+"Nghi's solution worked. Nobody understands why.",
+
+"Chinh found the issue in 30 seconds and judged everyone silently.",
+
+"Tung's meeting invitation has another meeting attached to it.",
+
+"Trang knows the office gossip before it becomes gossip.",
+
+"Cuong found a 0.5mm discrepancy and refused to ignore it.",
+
+"Duong can detect coffee within a 200-meter radius.",
+
+"An's desktop icons have formed their own civilization.",
+
+"Nghi accidentally created three new problems while fixing one.",
+
+"Chinh speaks fluent Warning Message.",
+
+"Tung believes every problem can be solved with one more meeting.",
+
+"Trang has access to information not available to normal humans.",
+
+"The project may fail, but Cuong's dimensions will be correct.",
+
+"Duong converted caffeine directly into BIM productivity."
+
 ];
 
 // ═══════════════════════════════════════════
