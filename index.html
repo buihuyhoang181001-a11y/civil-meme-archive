@@ -785,10 +785,51 @@ function selectPrPerson(p, btn) {
 // BLAME WHEEL
 // ═══════════════════════════════════════════
 const BLAME_QUESTIONS = [
-  { label:'Who broke prod?',            crimes: ['broke the build','pushed to main directly','forgot to test','disabled all the tests','yeeted prod DB'] },
-  { label:'Who called the 2hr meeting?', crimes: ['could have been an email','invited 14 people','had no agenda','scheduled it at 4:59pm','rescheduled 3 times'] },
-  { label:'Who ate the office snacks?',  crimes: ['ALL of them','the good ones first','and didn\'t replace them','and blamed the interns','and denied it with crumbs on their face'] },
-  { label:'Who ghosted Slack?',          crimes: ['for 4 hours','on a Monday','during an incident','and replied ✅ to nothing','and came back with "lol what did I miss"'] },
+
+{
+label:"✨ Who is the most beautiful today?",
+crimes:[
+"Today's main character. 💅",
+"Mirror approved. 10/10.",
+"Beauty level: Illegal.",
+"The camera loves them today.",
+"Someone hide them from the modelling agencies."
+]
+},
+
+{
+label:"🍀 Who has the most luck today?",
+crimes:[
+"Should buy a lottery ticket.",
+"Today's RNG favorite.",
+"Everything will somehow work out.",
+"Can probably survive anything today.",
+"The universe is on their side."
+]
+},
+
+{
+label:"🍜 Who should pay for dinner today?",
+crimes:[
+"is officially buying dinner.",
+"Wallet detected. Payment accepted.",
+"No refunds. No excuses.",
+"The team already voted.",
+"Congratulations, you're today's sponsor."
+]
+},
+
+{
+label:"😂 Who is most likely to embarrass themselves today?",
+crimes:[
+"Will say 'you're muted' while being muted.",
+"Will send the wrong screenshot.",
+"Will accidentally reply-all.",
+"Will confidently be wrong.",
+"Will become today's meme."
+]
+}
+
 ];
 const WHEEL_COLORS = ['#f43f5e','#fb923c','#facc15','#4ade80','#38bdf8','#818cf8','#e879f9'];
 let wheelAngle = 0, isSpinning = false, activeQuestion = BLAME_QUESTIONS[0];
@@ -837,35 +878,67 @@ function drawWheel(angle) {
 
 function spinWheel() {
   if (isSpinning) return;
+
   isSpinning = true;
   document.getElementById('wheel-result').innerHTML = '';
   document.getElementById('spin-btn').textContent = '🌀 Spinning...';
-  const extra = 1800 + Math.random() * 1440;
-  const target = wheelAngle + extra;
+
+  const winnerIndex = Math.floor(Math.random() * TEAM.length);
+  const winner = TEAM[winnerIndex];
+
+  const slice = 360 / TEAM.length;
+
+  // Pointer is at the top.
+  const targetAngle =
+      (360 * 6) +
+      (360 - (winnerIndex * slice + slice / 2));
+
+  const startAngle = wheelAngle;
   const duration = 3200;
   const start = performance.now();
-  const startAngle = wheelAngle;
-  function ease(t) { return 1 - Math.pow(1-t, 4); }
-  function frame(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const current = startAngle + (target - startAngle) * ease(t);
-    wheelAngle = current;
-    const rad = (current % 360) * Math.PI / 180;
-    drawWheel(rad);
-    if (t < 1) { requestAnimationFrame(frame); return; }
-    isSpinning = false;
-    wheelAngle = target % 360;
-    const n = TEAM.length, slice = 360 / n;
-    const norm = ((90 - (wheelAngle % 360) + 360) % 360);
-    const idx = (Math.floor(norm / slice)+1) % n;
-    const winner = TEAM[idx];
-    const crime  = activeQuestion.crimes[Math.floor(Math.random()*activeQuestion.crimes.length)];
-    document.getElementById('spin-btn').textContent = '🎰 Spin the Wheel';
-    document.getElementById('wheel-result').innerHTML = `
-      <div class="wheel-result-name">${winner.emoji} ${winner.name}!</div>
-      <div class="wheel-result-crime">Verdict: ${winner.name} ${crime}</div>
-    `;
+
+  function ease(t){
+      return 1 - Math.pow(1 - t, 4);
   }
+
+  function frame(now){
+
+      const t = Math.min((now - start) / duration,1);
+
+      wheelAngle =
+          startAngle +
+          (targetAngle - startAngle) * ease(t);
+
+      drawWheel((wheelAngle % 360) * Math.PI / 180);
+
+      if(t < 1){
+          requestAnimationFrame(frame);
+          return;
+      }
+
+      wheelAngle %= 360;
+      isSpinning = false;
+
+      const verdict =
+          activeQuestion.crimes[
+              Math.floor(Math.random()*activeQuestion.crimes.length)
+          ];
+
+      document.getElementById('spin-btn').textContent =
+          '🎰 Spin the Wheel';
+
+      document.getElementById('wheel-result').innerHTML =
+      `
+      <div class="wheel-result-name">
+          ${winner.emoji} ${winner.name}!
+      </div>
+
+      <div class="wheel-result-crime">
+          ${verdict}
+      </div>
+      `;
+  }
+
   requestAnimationFrame(frame);
 }
 
@@ -874,9 +947,9 @@ function spinWheel() {
 // ═══════════════════════════════════════════
 const VOTE_QUESTIONS = [
   { id:'prod',    label:'💀 Who broke prod today?'           },
-  { id:'coffee',  label:'☕ Who stole the last coffee?'      },
+  { id:'coffee',  label:'☕ Who is the most beautiful today?'     },
   { id:'meeting', label:'😴 Who zoned out hardest in the meeting?' },
-  { id:'meme',    label:'🏆 Who sends the best memes?'       },
+  { id:'meme',    label:'🏆 Who should pay for dinner today?'      },
   { id:'carry',   label:'💪 Who carries the team hardest?'   },
 ];
 
