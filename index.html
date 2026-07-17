@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌈 CIVIL MEME ARCHIVE 🌈</title>
+<title>CIVIL MEME ARCHIVE</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌈</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -554,7 +555,19 @@ insert into storage.buckets (id, name, public) values ('memes','memes', true)
   on conflict (id) do nothing;
 create policy "Public read memes bucket" on storage.objects for select using (bucket_id = 'memes');
 create policy "Signed-in users can upload to memes bucket" on storage.objects for insert to authenticated with check (bucket_id = 'memes');
-create policy "Signed-in users can delete from memes bucket" on storage.objects for delete to authenticated using (bucket_id = 'memes');`;
+create policy "Signed-in users can delete from memes bucket" on storage.objects for delete to authenticated using (bucket_id = 'memes');
+
+-- Lock down the approval/admin table so a regular signed-in user can't self-approve or self-promote
+alter table approved_users enable row level security;
+create or replace function is_admin_user()
+returns boolean language sql security definer set search_path = public
+as $$ select coalesce((select is_admin from approved_users where email = auth.jwt() ->> 'email'), false); $$;
+create policy "View own row or all rows if admin" on approved_users for select to authenticated
+  using ( is_admin_user() or email = auth.jwt() ->> 'email' );
+create policy "Users can request their own access" on approved_users for insert to authenticated
+  with check ( email = auth.jwt() ->> 'email' );
+create policy "Only admins can update approval status" on approved_users for update to authenticated
+  using ( is_admin_user() ) with check ( is_admin_user() );`;
 
 // Pre-configured Supabase project — baked in so every teammate gets cloud sync
 // automatically without needing to paste keys themselves. The anon key is the
