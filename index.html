@@ -1501,23 +1501,16 @@ function resizeImageToBlob(file, maxDim = 1280, quality = 0.82) {
 }
 
 // ── Lightbox ──
-let lightboxScrollY = 0;
 function openLightbox(src) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox').classList.add('open');
-  lightboxScrollY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${lightboxScrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
 }
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  window.scrollTo(0, lightboxScrollY);
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
 
