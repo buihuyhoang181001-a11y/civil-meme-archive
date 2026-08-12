@@ -252,6 +252,7 @@
     .pr-layout{grid-template-columns:1fr}
     .gallery-header{gap:10px}
     #vote-layout{grid-template-columns:1fr!important}
+    .gallery-preview-btn{display:none}
   }
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -1241,7 +1242,7 @@ function renderGalleryItem(grid, img, idx) {
     <div class="gallery-item-overlay">
       <div class="gallery-item-actions">
         <span class="gallery-item-meta">${img.name}</span>
-        <button class="gallery-item-icon-btn" title="Preview" onclick="event.stopPropagation(); openLightbox('${img.url}')">🔍</button>
+        <button class="gallery-item-icon-btn gallery-preview-btn" title="Preview" onclick="event.stopPropagation(); openLightbox('${img.url}')">🔍</button>
         <button class="gallery-item-icon-btn" title="Download" onclick="event.stopPropagation(); downloadImage('${img.url}','${img.name.replace(/'/g,"\\'")}')">⬇</button>
         ${canEdit ? `<button class="gallery-item-delete" onclick="deleteImage(event,${idx})">🗑 Delete</button>` : ''}
       </div>
