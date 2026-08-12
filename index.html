@@ -450,6 +450,12 @@ const TEAM = [
   { id:'trang', name:'Trang', title:'Trang tròn trịa', emoji:'👀',
     stats:{ coffee:70, chaos:44, meet:59, bug:37 },
     verdict:"Trang knew you were going to read this verdict before you clicked. She has already prepared a response." },
+  { id:'son',   name:'Sơn',   title:'Sơn sung sức',    emoji:'💪',
+    stats:{ coffee:80, chaos:50, meet:45, bug:40 },
+    verdict:"Son shows up to a 7am site visit looking like he slept 10 hours. Nobody knows his secret. He's not telling." },
+  { id:'nam',   name:'Nam',   title:'Nam nóng nực',    emoji:'🔥',
+    stats:{ coffee:58, chaos:63, meet:36, bug:52 },
+    verdict:"Nam gets heated over a misplaced rebar tag faster than the site gets heated at noon. Both are legendary." },
 ];
 // Randomize stats (60-100), calculate total power, and sort descending
 TEAM.forEach(member => {
@@ -701,6 +707,7 @@ function getMemeCounts() {
 
 // ── Gallery load & render ──
 async function loadAndRenderGallery() {
+  galleryLoadFailed = false;
   if (isCloudConfigured() && supaClient) {
     document.getElementById('gallery-grid').innerHTML = '<div class="gallery-empty">Loading memes…</div>';
     const { data, error } = await supaClient
@@ -709,9 +716,9 @@ async function loadAndRenderGallery() {
       .eq('person_id', currentGalleryPerson.id)
       .order('uploaded_at', { ascending: true });
     if (error) {
-      showToast('❌ Could not load cloud gallery', 'error');
+      showToast('❌ Could not load cloud gallery — nothing was deleted, just retry', 'error');
       console.error(error);
-      galleryImages = [];
+      galleryLoadFailed = true;
     } else {
       galleryImages = data.map(r => ({ id: r.id, url: r.url, name: r.name, uploadedAt: r.uploaded_at, uploadedBy: r.uploaded_by, path: r.storage_path }));
     }
@@ -1128,6 +1135,7 @@ function resetVote() {
 // ═══════════════════════════════════════════
 let currentGalleryPerson = null;
 let galleryImages = []; // { id, url, name, uploadedAt }
+let galleryLoadFailed = false;
 
 function openGallery(person) {
   currentGalleryPerson = person;
@@ -1159,6 +1167,14 @@ function renderGalleryGrid() {
   const clearBtn = document.getElementById('clear-gallery-btn');
   const exportBtn = document.getElementById('export-btn');
   grid.innerHTML = '';
+
+  if (galleryLoadFailed) {
+    countBadge.textContent = '⚠️ load error';
+    clearBtn.style.display = 'none';
+    exportBtn.style.display = 'none';
+    grid.innerHTML = `<div class="gallery-empty">⚠️ Couldn't load this gallery — your memes are still there, this browser just couldn't reach them.<br><button class="btn btn-primary" style="margin-top:12px" onclick="loadAndRenderGallery()">🔄 Retry</button></div>`;
+    return;
+  }
 
   const n = galleryImages.length;
   countBadge.textContent = `${n} meme${n!==1?'s':''}`;
